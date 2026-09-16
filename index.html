@@ -96,6 +96,16 @@
       .mobile-again{width:100%;max-width:360px;border:0;border-radius:999px;background:linear-gradient(135deg,#d86f45,#c85e36);color:#fff;font-weight:800;font-size:1.05rem;padding:15px 24px;box-shadow:0 8px 20px rgba(216,111,69,.28)}
     }
     @media(prefers-reduced-motion:reduce){.fortune-loading-stars span,.visual-screen.reveal{animation:none}}
+    @media(max-width:700px){
+      body.mobile-html-result .visual-app{display:none}
+      body.mobile-html-result .shell>.fortune-box{display:block;border-radius:0;border-left:0;border-right:0;box-shadow:none}
+      body.mobile-html-result .shell>.back{display:inline-block;margin:18px 20px 28px}
+      body.mobile-html-result .result{padding:12px}
+      body.mobile-html-result .photo-frame{aspect-ratio:4/3}
+      body.mobile-html-result .hero-copy{padding:22px 10px 8px}
+      body.mobile-html-result h2#dishName{font-size:1.75rem}
+      body.mobile-html-result .message p{font-size:.98rem}
+    }
   </style>
 </head>
 <body>
@@ -190,6 +200,17 @@
     let visualPrevious=-1;
     async function drawVisual(){
       if(!$('fortuneLoading').hidden)return;
+      if(window.innerWidth<=700){
+        $('fortuneLoading').hidden=false;
+        $('visualDraw').disabled=true;
+        await new Promise(resolve=>window.setTimeout(resolve,1400));
+        draw();
+        document.body.classList.add('mobile-html-result');
+        $('fortuneLoading').hidden=true;
+        $('visualDraw').disabled=false;
+        window.scrollTo({top:0,behavior:'smooth'});
+        return;
+      }
       let n;
       do{n=Math.floor(Math.random()*24)}while(n===visualPrevious);
       visualPrevious=n;
