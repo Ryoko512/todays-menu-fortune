@@ -82,7 +82,17 @@
     @keyframes screenReveal{from{opacity:.35;filter:blur(3px)}to{opacity:1;filter:none}}
     .visual-back{display:inline-flex;margin:14px 18px 24px;color:#5c6f57;text-decoration:none;font-weight:700;font-size:1rem;line-height:1.5}
     .visual-back:hover{text-decoration:underline}
-    @media(max-width:700px){.visual-app{padding-bottom:8px}.visual-back{font-size:.9rem;margin:12px}.visual-button:focus-visible{outline-width:2px;outline-offset:2px}.fortune-loading-inner{padding:20px 18px;border-radius:20px}.fortune-loading-stars{font-size:1.5rem;gap:16px}}
+    .mobile-result{display:none}
+    @media(max-width:700px){
+      .visual-app{padding-bottom:8px}.visual-back{font-size:.9rem;margin:12px}.visual-button:focus-visible{outline-width:2px;outline-offset:2px}.fortune-loading-inner{padding:20px 18px;border-radius:20px}.fortune-loading-stars{font-size:1.5rem;gap:16px}
+      .visual-stage.mobile-result-active>.visual-screen,.visual-stage.mobile-result-active>.menu-button{display:none}
+      .visual-stage.mobile-result-active .mobile-result{display:block;line-height:0;background:#fffaf1}
+      .mobile-panel{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;background:#fffaf1}
+      .mobile-panel img{position:absolute;top:0;width:200%;height:100%;max-width:none;object-fit:fill}
+      .mobile-panel.left img{left:0}.mobile-panel.right img{left:-100%}
+      .mobile-again-wrap{padding:16px 18px 10px;text-align:center;line-height:1.5}
+      .mobile-again{width:100%;max-width:360px;border:0;border-radius:999px;background:linear-gradient(135deg,#d86f45,#c85e36);color:#fff;font-weight:800;font-size:1.05rem;padding:15px 24px;box-shadow:0 8px 20px rgba(216,111,69,.28)}
+    }
     @media(prefers-reduced-motion:reduce){.fortune-loading-stars span,.visual-screen.reveal{animation:none}}
   </style>
 </head>
@@ -129,6 +139,11 @@
       <img class="visual-screen" id="visualScreen" src="assets/screens/cover.png" alt="今日の献立占い。24品から今日の献立と簡単レシピを選べます。">
       <button class="visual-button cover-button" id="visualDraw" aria-label="今日の献立を占う">今日の献立を占う</button>
       <button class="visual-button menu-button" id="visualAgain" aria-label="もう一度占う" hidden>もう一度占う</button>
+      <div class="mobile-result" id="mobileResult">
+        <div class="mobile-panel left"><img id="mobileScreenLeft" src="assets/screens/menu-01.png" alt=""></div>
+        <div class="mobile-panel right"><img id="mobileScreenRight" src="assets/screens/menu-01.png" alt=""></div>
+        <div class="mobile-again-wrap"><button class="mobile-again" id="mobileAgain">もう一度占う</button></div>
+      </div>
       <div class="fortune-loading" id="fortuneLoading" role="status" aria-live="polite" hidden>
         <div class="fortune-loading-inner">
           <div class="fortune-loading-stars" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span></div>
@@ -187,6 +202,11 @@
       screen.classList.remove('reveal');
       screen.src=nextSrc;
       screen.alt=menus[n].name+'。材料と作り方';
+      $('mobileScreenLeft').src=nextSrc;
+      $('mobileScreenLeft').alt=menus[n].name+'の料理写真';
+      $('mobileScreenRight').src=nextSrc;
+      $('mobileScreenRight').alt=menus[n].name+'の材料と作り方';
+      $('visualApp').querySelector('.visual-stage').classList.add('mobile-result-active');
       $('visualDraw').hidden=true;
       $('visualAgain').hidden=false;
       $('fortuneLoading').hidden=true;
@@ -198,6 +218,7 @@
     }
     $('visualDraw').addEventListener('click',drawVisual);
     $('visualAgain').addEventListener('click',drawVisual);
+    $('mobileAgain').addEventListener('click',drawVisual);
   </script>
 </body>
 </html>
