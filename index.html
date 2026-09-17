@@ -82,30 +82,33 @@
     @keyframes screenReveal{from{opacity:.35;filter:blur(3px)}to{opacity:1;filter:none}}
     .visual-back{display:inline-flex;margin:14px 18px 24px;color:#5c6f57;text-decoration:none;font-weight:700;font-size:1rem;line-height:1.5}
     .visual-back:hover{text-decoration:underline}
+    .mobile-cover{display:none}
     .mobile-result{display:none}
     @media(max-width:700px){
       .visual-app{padding-bottom:8px}.visual-back{font-size:.9rem;margin:12px}.visual-button:focus-visible{outline-width:2px;outline-offset:2px}.fortune-loading-inner{padding:20px 18px;border-radius:20px}.fortune-loading-stars{font-size:1.5rem;gap:16px}
+      .visual-stage:not(.mobile-result-active){height:auto;min-height:0;overflow:hidden}
+      .visual-stage:not(.mobile-result-active)>.visual-screen,.visual-stage:not(.mobile-result-active)>.cover-button{display:none}
+      .visual-stage:not(.mobile-result-active)>.mobile-cover{display:block;background:#fffaf1}
+      .mobile-cover-top{position:relative;width:100%;aspect-ratio:886/430;overflow:hidden}
+      .mobile-cover-top img{position:absolute;top:0;left:-39.5%;width:179%;height:auto;max-width:none}
+      .mobile-cover-food{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden}
+      .mobile-cover-food img{position:absolute;top:-83.33%;left:-103.68%;width:307.36%;height:auto;max-width:none}
+      .mobile-cover-button{position:absolute;left:18%;top:63%;width:64%;height:25%;border:0;background:transparent;color:transparent;font-size:0;border-radius:999px;cursor:pointer}
+      .visual-stage.mobile-result-active>.mobile-cover{display:none}
       .visual-stage.mobile-result-active>.visual-screen,.visual-stage.mobile-result-active>.menu-button{display:none}
       .visual-stage.mobile-result-active .mobile-result{display:block;line-height:0;background:#fffaf1}
-      .mobile-header{position:relative;width:100%;height:14vw;max-height:100px;overflow:hidden;background:#fffaf1}
+      .mobile-header{position:relative;width:100%;height:8.6vw;max-height:62px;overflow:hidden;background:#fffaf1}
       .mobile-header img{display:block;width:100%;height:auto}
-      .mobile-panel{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:#fffaf1}
-      .mobile-panel img{position:absolute;top:-25%;width:213.34%;height:auto;max-width:none}
-      .mobile-panel.dish img{left:-5.6%}.mobile-panel.recipe img{left:-108.4%}
+      .mobile-panel{position:relative;width:100%;overflow:hidden;background:#fffaf1}
+      .mobile-panel img{position:absolute;height:auto;max-width:none}
+      .mobile-panel.dish{aspect-ratio:730/694}
+      .mobile-panel.dish img{top:-18.63%;left:-5.34%;width:217.26%}
+      .mobile-panel.recipe{aspect-ratio:767/694}
+      .mobile-panel.recipe img{top:-17.73%;left:-101.69%;width:206.78%}
       .mobile-again-wrap{padding:16px 18px 10px;text-align:center;line-height:1.5}
       .mobile-again{width:100%;max-width:360px;border:0;border-radius:999px;background:linear-gradient(135deg,#d86f45,#c85e36);color:#fff;font-weight:800;font-size:1.05rem;padding:15px 24px;box-shadow:0 8px 20px rgba(216,111,69,.28)}
     }
     @media(prefers-reduced-motion:reduce){.fortune-loading-stars span,.visual-screen.reveal{animation:none}}
-    @media(max-width:700px){
-      body.mobile-html-result .visual-app{display:none}
-      body.mobile-html-result .shell>.fortune-box{display:block;border-radius:0;border-left:0;border-right:0;box-shadow:none}
-      body.mobile-html-result .shell>.back{display:inline-block;margin:18px 20px 28px}
-      body.mobile-html-result .result{padding:12px}
-      body.mobile-html-result .photo-frame{aspect-ratio:4/3}
-      body.mobile-html-result .hero-copy{padding:22px 10px 8px}
-      body.mobile-html-result h2#dishName{font-size:1.75rem}
-      body.mobile-html-result .message p{font-size:.98rem}
-    }
   </style>
 </head>
 <body>
@@ -151,6 +154,10 @@
       <img class="visual-screen" id="visualScreen" src="assets/screens/cover.png" alt="今日の献立占い。24品から今日の献立と簡単レシピを選べます。">
       <button class="visual-button cover-button" id="visualDraw" aria-label="今日の献立を占う">今日の献立を占う</button>
       <button class="visual-button menu-button" id="visualAgain" aria-label="もう一度占う" hidden>もう一度占う</button>
+      <div class="mobile-cover">
+        <div class="mobile-cover-top"><img src="assets/screens/cover.png" alt="今日の献立占い"><button class="mobile-cover-button" id="mobileCoverDraw" aria-label="今日の献立を占う">今日の献立を占う</button></div>
+        <div class="mobile-cover-food"><img src="assets/screens/cover.png" alt="食卓に並ぶ料理"></div>
+      </div>
       <div class="mobile-result" id="mobileResult">
         <div class="mobile-header"><img id="mobileScreenHeader" src="assets/screens/menu-01.png" alt=""></div>
         <div class="mobile-panel dish"><img id="mobileScreenDish" src="assets/screens/menu-01.png" alt=""></div>
@@ -200,17 +207,6 @@
     let visualPrevious=-1;
     async function drawVisual(){
       if(!$('fortuneLoading').hidden)return;
-      if(window.innerWidth<=700){
-        $('fortuneLoading').hidden=false;
-        $('visualDraw').disabled=true;
-        await new Promise(resolve=>window.setTimeout(resolve,1400));
-        draw();
-        document.body.classList.add('mobile-html-result');
-        $('fortuneLoading').hidden=true;
-        $('visualDraw').disabled=false;
-        window.scrollTo({top:0,behavior:'smooth'});
-        return;
-      }
       let n;
       do{n=Math.floor(Math.random()*24)}while(n===visualPrevious);
       visualPrevious=n;
@@ -243,6 +239,7 @@
       window.scrollTo({top:0,behavior:'smooth'});
     }
     $('visualDraw').addEventListener('click',drawVisual);
+    $('mobileCoverDraw').addEventListener('click',drawVisual);
     $('visualAgain').addEventListener('click',drawVisual);
     $('mobileAgain').addEventListener('click',drawVisual);
   </script>
