@@ -109,7 +109,8 @@
       .mobile-again{width:100%;max-width:360px;border:0;border-radius:999px;background:linear-gradient(135deg,#d86f45,#c85e36);color:#fff;font-weight:800;font-size:1.05rem;padding:15px 24px;box-shadow:0 8px 20px rgba(216,111,69,.28)}
     }
     @media(min-width:1600px){
-      .visual-app{width:min(1280px,100%)}
+      .visual-app{width:min(1586px,calc(100% - 40px))}
+      .visual-screen{aspect-ratio:1586/945;object-fit:contain;image-rendering:-webkit-optimize-contrast}
     }
     @media(prefers-reduced-motion:reduce){.fortune-loading-stars span,.visual-screen.reveal{animation:none}}
   </style>
